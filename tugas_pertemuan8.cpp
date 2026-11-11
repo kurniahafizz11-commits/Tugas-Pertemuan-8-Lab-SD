@@ -1,27 +1,25 @@
-#include<iostream>
-#include<vector>
-#include<string>
-#include<iomanip>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
 using namespace std;
 
 const int TABLE_SIZE = 10;
 
-// nim dan nama 
-
 class HashTable {
-    private :
-        vector <pair<int, string>> table;
-        vector <int> status;
+    private:
+        vector<pair<int, string>> table;
+        vector<int> status;
 
         int hash1(int key) {
             return key % TABLE_SIZE;
         }
         
-        int hash2 (int key) {
+        int hash2(int key) {
             return 7 - (key % 7);
         }
 
-    public : 
+    public: 
         HashTable() {
             table.resize(TABLE_SIZE);
             status.resize(TABLE_SIZE, 0);
@@ -37,11 +35,12 @@ class HashTable {
             while (true) {
                 if (status[index] == 1 && table[index].first == key) {
                     table[index].second = value;
+                    cout << "Data NIM " << key << " berhasil diperbarui!\n";
                     return;
                 }
 
                 if (status[index] == 2 && deletedIndex == -1) {
-                    deletedIndex = index; // 9 -> 10, kimmy , HAPUS, 9 -> deleted
+                    deletedIndex = index;
                 }
 
                 if (status[index] == 0) {
@@ -51,7 +50,7 @@ class HashTable {
 
                     table[index] = make_pair(key, value);
                     status[index] = 1;
-                    cout<< "Sukses insert: [" << key << "] "<<value<<"di indeks "<<index<<endl;
+                    cout << "Sukses insert: [" << key << "] " << value << " di indeks " << index << endl;
                     return;
                 }
 
@@ -65,7 +64,7 @@ class HashTable {
             if (deletedIndex != -1) {
                 table[deletedIndex] = make_pair(key, value);
                 status[deletedIndex] = 1;
-                cout<<"Sukses insert (mengisi slot kosong) : ["<<key<<"] "<<value<<"di indeks "<<deletedIndex<<endl;
+                cout << "Sukses insert (mengisi slot kosong): [" << key << "] " << value << " di indeks " << deletedIndex << endl;
             } else {
                 cout << "Gagal insert: Hash Table sudah penuh!" << endl;
             }
@@ -78,7 +77,7 @@ class HashTable {
 
             while (status[index] != 0) {
                 if (status[index] == 1 && table[index].first == key) {
-                    cout << "Data ditemukan -> NIM: " << table[index].first<<", Nama: "<<table[index].second << endl;
+                    cout << "Data ditemukan -> NIM: " << table[index].first << ", Nama: " << table[index].second << " (Indeks " << index << ")" << endl;
                     return;
                 }  
 
@@ -89,10 +88,10 @@ class HashTable {
                 }
             }
 
-            cout << "Data NIM " << key <<" tidak ditemukan!"<< endl;
+            cout << "Data NIM " << key << " tidak ditemukan!" << endl;
         }
 
-        void remove (int key) {
+        void remove(int key) {
             int index = hash1(key);
             int step = hash2(key);
             int initialIndex = index;
@@ -100,7 +99,7 @@ class HashTable {
             while (status[index] != 0) {
                 if (status[index] == 1 && table[index].first == key) {
                     status[index] = 2;
-                    cout << "Data NIM "<< key <<"berhasil dihapus dari indeks "<< index << endl;
+                    cout << "Data NIM " << key << " berhasil dihapus dari indeks " << index << endl;
                     return;
                 }
 
@@ -111,50 +110,82 @@ class HashTable {
                 }
             }
 
-            cout << "Gagal menghapus: Data NIM " << key <<" tidak ditemukan!" << endl;
+            cout << "Gagal menghapus: Data NIM " << key << " tidak ditemukan!" << endl;
         }
 
         void display() {
-            cout << "\n================ ISI HASH TABLE ================\n";
-            cout << left << setw(8) << "Indeks" << setw(12) << "NIM" << setw(15) << "Nama" << "Status" << endl;
-            cout << "------------------------------------------------\n";
+            cout << "\nISI HASH TABLE\n";
+            cout << left << setw(8) << "Indeks" << setw(15) << "NIM" << setw(30) << "Nama" << "Status" << endl <<endl;
             for (int i = 0; i < TABLE_SIZE; i++) {
                 cout << left << setw(8) << i;
 
                 if (status[i] == 1) {
-                    cout << setw(12) << table[i].first << setw(15) << table[i].second << "TERISI";
+                    cout << setw(15) << table[i].first << setw(30) << table[i].second << "TERISI";
                 } else if (status[i] == 2) {
-                    cout << setw(12) << "---" << setw(15) << "---" << "DELETED";
+                    cout << setw(15) << "---" << setw(30) << "---" << "DELETED";
                 } else {
-                    cout << setw(12) << "---" << setw(15) << "---" << "KOSONG";
+                    cout << setw(15) << "---" << setw(30) << "---" << "KOSONG";
                 }
                 cout << endl;
             }
-            cout << "================================================\n\n";
+            cout << endl;
         }
 };
 
 int main() {
     HashTable ht;
+    int pilihan, nim;
+    string nama;
 
-    cout << "Melakukan Operasi Insert : \n";
-    ht.insert(23, "Andi");
-    ht.insert(43, "Budi");
-    ht.insert(13, "Citra"); //terjadi collision dengan key 23 & 43
-    ht.insert(35, "Dewi");
+    do {
+        cout << "MENU HASH TABLE MAHASISWA\n";
+        cout << "1. Insert Data Mahasiswa\n";
+        cout << "2. Search Data (berdasarkan NIM)\n";
+        cout << "3. Remove Data (berdasarkan NIM)\n";
+        cout << "4. Tampilkan Isi Hash Table\n";
+        cout << "5. Keluar\n";
+        cout << "Pilih menu (1-5): ";
+        cin >> pilihan;
 
-    ht.display();
+        switch (pilihan) {
+            case 1:
+                cout << "Masukkan NIM (angka) : ";
+                cin >> nim;
+                cin.ignore();
+                cout << "Masukkan Nama        : ";
+                getline(cin, nama);
+                ht.insert(nim, nama);
+                cout << endl;
+                break;
 
-    cout << "Melakukan Operasi Search : \n";
-    ht.search(43);
-    ht.search(99); // tes mencari data yang tidak ada
-    cout<< endl;
+            case 2:
+                cout << "Masukkan NIM yang dicari: ";
+                cin >> nim;
+                ht.search(nim);
+                cout << endl;
+                break;
 
-    cout << "Melakukan Operasi Remove : \n";
-    ht.remove(43);
+            case 3:
+                cout << "Masukkan NIM yang akan dihapus: ";
+                cin >> nim;
+                ht.remove(nim);
+                cout << endl;
+                break;
 
-    cout << "Menampilkan Hasil Setelah Remove : ";
-    ht.display();
+            case 4:
+                ht.display();
+                break;
+
+            case 5:
+                cout << "\nMenampilkan isi akhir Hash Table sebelum keluar:\n";
+                ht.display();
+                cout << "Program selesai.\n";
+                break;
+
+            default:
+                cout << "Pilihan tidak valid! Silakan pilih 1-5.\n\n";
+        }
+    } while (pilihan != 5);
 
     return 0;
 }
